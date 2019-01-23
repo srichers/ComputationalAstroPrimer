@@ -9,3 +9,5 @@ notifications:
     on_success: change
     on_failure: always
 
+script:
+- cd hello_world; g++ hello_world.cpp; python test.py
