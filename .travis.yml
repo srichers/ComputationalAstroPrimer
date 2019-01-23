@@ -10,4 +10,4 @@ notifications:
     on_failure: always
 
 script:
-- cd hello_world; g++ hello_world.cpp; python test.py
+- cd hello_world; g++ hello_world.cpp; python3 test.py
