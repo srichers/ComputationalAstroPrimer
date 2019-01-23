@@ -9,11 +9,3 @@ notifications:
     on_success: change
     on_failure: always
 
-addons:
-  apt:
-  - python3
-  - g++-5
-  env:
-  - CC=gcc-5
-  - CXX=g++-5
-  - F90=gfortran-5
