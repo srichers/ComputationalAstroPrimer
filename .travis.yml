@@ -9,5 +9,13 @@ notifications:
     on_success: change
     on_failure: always
 
+addons:	
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - g++-5
+    - python3
+
 script:
 - cd hello_world; g++ hello_world.cpp; python3 test.py
