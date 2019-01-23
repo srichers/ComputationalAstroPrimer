@@ -17,9 +17,3 @@ addons:
   - CC=gcc-5
   - CXX=g++-5
   - F90=gfortran-5
-
-install:
-- cd hello_world; g++ hello_world.cpp
-
-script:
-- cd hello_world; python test.py
