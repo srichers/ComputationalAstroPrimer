@@ -22,9 +22,9 @@ print("chi^2: "+str(chi2/len(r)))
 
 
 # plot the results
-#plt.plot(r, theory)
-#plt.scatter(r, density)
-#plt.xlim(0,1)
-#plt.xlabel("Radius")
-#plt.ylabel("Density")
-#plt.savefig("result.pdf")
+plt.plot(r, theory)
+plt.scatter(r, density)
+plt.xlim(0,1)
+plt.xlabel("Radius")
+plt.ylabel("Density")
+plt.savefig("result.pdf")

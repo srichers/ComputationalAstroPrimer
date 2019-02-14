@@ -14,8 +14,9 @@ using namespace std;
 double randomDistance(RandomNumberGenerator& rng, double opacity){
   // choose an exponential random number with a mean value of 1/opacity.
   // use the function RandomNumberGenerator::uniform() to sample a uniform random number
-  double d = rng.exponential() / opacity;
+  double d = -log(rng.uniform()) / opacity;
   assert(d >= 0);
+  return d;
 }
 
 //=================//
