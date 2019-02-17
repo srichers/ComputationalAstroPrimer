@@ -34,7 +34,7 @@ void randomDirection(RandomNumberGenerator& rng, double v[3]){
   double costheta = 2.*rng.uniform() - 1.;
 
   // convert the angles to the new direction for your particle.
-  double sintheta = 1. - costheta*costheta;
+  double sintheta = sqrt(1. - costheta*costheta);
   v[0] = sintheta * cos(phi);
   v[1] = sintheta * sin(phi);
   v[2] = costheta;
