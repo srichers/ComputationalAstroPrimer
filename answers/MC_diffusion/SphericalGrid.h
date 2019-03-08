@@ -44,6 +44,7 @@ class SphericalGrid{
 
     // if index<0 it's already off the grid.
     if(index >= 0){
+      #pragma omp atomic
       count[index]++;
     }
   }

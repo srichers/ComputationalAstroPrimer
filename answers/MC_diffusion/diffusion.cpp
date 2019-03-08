@@ -1,7 +1,6 @@
 #include <iostream> // cout, endl
 #include <vector> // vector
 #include <cmath> // sqrt, M_PI
-#include <ctime> // time
 #include "Particle.h"
 #include "SphericalGrid.h"
 #include "RandomNumberGenerator.h"
@@ -72,23 +71,27 @@ int main(){
   const int nr = 20;
   
   vector<Particle> particle_array(nparticles);
-  RandomNumberGenerator rng(time(NULL));
+  RandomNumberGenerator rng;
   SphericalGrid grid(rmax, nr);
 
-  // initialize the particles to start at the center with a random direction
-  for(int i=0; i<particle_array.size(); i++){
+#pragma omp parallel for
+  for(int i=0; i<nparticles; i++){
+    
+    // initialize the particles to start at the center with a random direction
     for(int j=0; j<3; j++){
       particle_array[i].x[j] = 0;
     }
     randomDirection(rng, particle_array[i].v);
     particle_array[i].t = 0;
+
+    // move every particle
+    move(particle_array[i], rng, tend, scatter_opacity);
+
   }
 
-  // move every particle and record its final position
-  for(int i=0; i<particle_array.size(); i++){
-    move(particle_array[i], rng, tend, scatter_opacity);
+  for(int i=0; i<nparticles; i++)
+    // record particle final position
     grid.tally(particle_array[i].x);
-  }
 
   // write out the results
   grid.print(nparticles);
