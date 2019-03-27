@@ -1,24 +1,27 @@
 #include <array>
+#include <cmath>
 using namespace std;
 
-// EOS class for ideal gas (P = nkT). k is assumed to be 1.
-// for now, assume m=1 so rho=n
+// EOS class for ideal gas (P = eps*rho(gamma-1)
 class EOS{
  public:
-  template<size_t nx>
-  array<double,nx> pressure(const array<double,nx> rho, const array<double,nx> Eint) const{
-    array<double,nx> result = 2./3. * Eint;
-    return result;
+  double gamma;
+  
+  double internal_energy_density(double density, double pressure){
+    assert(gamma>1.); // make sure EOS is initialized
+
+    return pressure / (density * (gamma-1.));
   }
 
-  template<size_t nx>
-  array<double,nx> csound(const array<double,nx> rho, const array<double,nx> P) const{
-    array<double,nx> result = P/rho;
-    return result;
+  double pressure(double density, double internal_energy_density){
+    assert(gamma>1.); // make sure EOS is initialized
+
+    return density * internal_energy_density * (gamma-1.);
   }
 
-  template<size_t nx>
-  array<double,nx> Eint(const array<double,nx> rho, const array<double,nx> P) const{
-    return 3./2. * P;
-  }
+  double soundspeed(double density, double pressure){
+    assert(gamma>1.);
+
+    return sqrt(gamma * pressure / density);
+  }  
 };

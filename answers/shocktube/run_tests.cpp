@@ -3,6 +3,7 @@
 #include "initial_conditions.h"
 #include "boundary_conditions.h"
 #include "reconstruct.h"
+#include "EOS.h"
 using namespace std;
 
 void print_success(bool success){
@@ -90,7 +91,14 @@ int main(){
   //=====//
   // EOS //
   //=====//
-  cout << "EOS: " << endl;
+  cout << "EOS: ";
+  passing = true;
+  EOS eos;
+  eos.gamma = 2.;
+  passing = passing & (eos.internal_energy_density(2.,3.) == 3./2.);
+  passing = passing & (eos.pressure(2.,3.) == 6.);
+  passing = passing & (eos.soundspeed(2.,3.)==sqrt(3.));
+  print_success(passing);
   
   //==========//
   // Prim2Con //
