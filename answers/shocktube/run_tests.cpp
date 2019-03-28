@@ -173,22 +173,52 @@ int main(){
   cout << "HLL Wave Speeds: ";
   passing = true;
   array<array<double,nx-1>,2> wavespeedLR;
-  primitiveLR[0][0][0] = primitiveLR[1][0][0] = 1;
-  primitiveLR[0][1][0] = primitiveLR[1][1][0] = -4;
-  primitiveLR[0][2][0] = primitiveLR[1][2][0] = 2;
+  for(int i=0; i<nx; i++){
+    primitive[0][i] = 1;
+    primitive[1][i] = -4;
+    primitive[2][i] = 2;
+  }
+  conservative = get_conservative<nx>(primitive,eos);
+  conservativeLR = piecewise_constant_reconstruct<nx>(conservative);
+  for(int LR=0; LR<=1; LR++)
+    primitiveLR[LR] = get_primitive<nx-1>(conservativeLR[LR],eos);
   wavespeedLR = HLL_wave_speeds<nx-1>(primitiveLR, eos);
-  passing = passing && floateq(wavespeedLR[0][0],-6.);
-  passing = passing && floateq(wavespeedLR[1][0],-2.);
+  for(int i=0; i<nx-1; i++){
+    passing = passing && floateq(wavespeedLR[0][i],-6.);
+    passing = passing && floateq(wavespeedLR[1][i],-2.);
+  }
   print_success(passing);
   if(!passing){
     print_array<nx-1,double>(wavespeedLR[0]);
     print_array<nx-1,double>(wavespeedLR[1]);
   }
 
-  // cout << "HLL Flux: ";
-  // passing = true;
-  // array<double,3> riemann_flux = HLL_flux(primitiveLR, conservativeLR, wavespeedLR);
-  // print_success(passing);
+  cout << "HLL Flux: ";
+  passing = true;
+  double max_wavespeed = 0;
+  array<array<double,nx-1>,3> riemann_flux = HLL_flux<nx-1>(primitiveLR, conservativeLR, eos, &max_wavespeed);
+  for(int i=0; i<nx-1; i++){
+      passing = passing && floateq(riemann_flux[0][i],-4.);
+      passing = passing && floateq(riemann_flux[1][i],18.);
+      passing = passing && floateq(riemann_flux[2][i],-48.);
+  }
+  passing = passing && floateq(max_wavespeed,6.);
+  print_success(passing);
+  if(!passing){
+    cout << max_wavespeed << endl;
+    cout << "wavespeedL: ";
+    print_array<nx-1,double>(wavespeedLR[0]);
+    cout << "wavespeedR: ";
+    print_array<nx-1,double>(wavespeedLR[1]);
+    for(int v=0; v<3; v++){
+      cout << "primitiveL " << v << ": ";
+      print_array<nx-1,double>(primitiveLR[0][v]);
+      cout << "primitiveR " << v << ": ";
+      print_array<nx-1,double>(primitiveLR[1][v]);
+      cout << "flux " << v << ": ";
+      print_array<nx-1,double>(riemann_flux[v]);
+    }
+  }
   
   return 0;
 }
