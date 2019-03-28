@@ -4,14 +4,11 @@ using namespace std;
 double poison = 0./0.;
 
 // set the initial conditions
-template<int nx,int nghost>
+template<int nx>
 void set_initial_conditions(double rhoL, double rhoR,
 			    double vxL, double vxR,
 			    double pressL, double pressR,
 			    array< array<double,nx>, 3>& primitive){
-  // make sure our array is big enough
-  assert(nx > 2*nghost);
-  
   // set left and right states
   for(int i=0; i<nx; i++){
     if(i<nx/2){

@@ -44,7 +44,7 @@ int main(){
   //====================//
   cout << "Initial Conditions: ";
   passing = true;
-  set_initial_conditions<nx,nghost>(3,3, 3,3, 3,3, primitive);
+  set_initial_conditions<nx>(3,3, 3,3, 3,3, primitive);
   for(int i=nghost; i<nx-2*nghost; i++){
     passing = passing && floateq(primitive[0][i],3); // rho
     passing = passing && floateq(primitive[1][i],3); // vx
