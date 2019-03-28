@@ -106,8 +106,7 @@ int main(){
   //=====//
   cout << "EOS: ";
   passing = true;
-  EOS eos;
-  eos.gamma = 2.;
+  EOS eos(2.);
   primitive[0][0] = 2.;
   primitive[2][0] = 3.;
   tmp[0] = eos.internal_energy_density<nx>(primitive[0], primitive[2]);
@@ -128,7 +127,6 @@ int main(){
   conservative[0][0] = 2;
   conservative[1][0] = 4;
   conservative[2][0] = 6;
-  eos.gamma = 2.;
 
   cout << "Primitive-->Conservative: ";
   passing = true;

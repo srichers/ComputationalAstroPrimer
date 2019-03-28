@@ -34,8 +34,7 @@ int main(){
   double max_wavespeed;
   
   // set up the EOS with an adiabatic index
-  EOS eos;
-  eos.gamma = adiabatic_index;
+  EOS eos(adiabatic_index);
   
   // set up the initial conditions
   // rho left/right, vx left/right, pressure left/right
