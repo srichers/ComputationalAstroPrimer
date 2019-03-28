@@ -1,3 +1,6 @@
+#ifndef RECONSTRUCT_H
+#define RECONSTRUCT_H
+
 #include <array>
 
 // this should get the values at the left (0) and right (1) side of each cell
@@ -16,3 +19,5 @@ array< array< array<double,nx-1>, 3>, 2> piecewise_constant_reconstruct(array< a
 
   return conservativeLR;
 }
+
+#endif

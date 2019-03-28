@@ -1,3 +1,6 @@
+#ifndef BOUNDARY_H
+#define BOUNDARY_H
+
 #include <array>
 
 template<int nx, int nghost>
@@ -12,3 +15,5 @@ template<int nx, int nghost>
     }
   }
 }
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef EOS_H
+#define EOS_H
+
 #include <array>
 #include <cmath>
 using namespace std;
@@ -43,3 +46,5 @@ class EOS{
     return cs;
   }  
 };
+
+#endif

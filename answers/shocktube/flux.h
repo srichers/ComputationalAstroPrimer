@@ -1,3 +1,6 @@
+#ifndef FLUX_H
+#define FLUX_H
+
 #include <array>
 
 template<int nx>
@@ -19,3 +22,5 @@ array<array<double,nx>,3> conservative_flux(const array<array<double,nx>,3> prim
 
   return flux;
 }
+
+#endif

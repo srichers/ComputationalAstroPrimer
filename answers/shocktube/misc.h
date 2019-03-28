@@ -1,3 +1,6 @@
+#ifndef MISC_H
+#define MISC_H
+
 template<size_t nx>
 void print(ofstream& output, int it, double t,
 	   const array<array<double,nx>,3>& primitive,
@@ -8,4 +11,7 @@ void print(ofstream& output, int it, double t,
     for(int v=1; v<3; v++) output << primitive[v][i] << "\t";
     output << endl;
   }
+  output << endl;
 }
+
+#endif

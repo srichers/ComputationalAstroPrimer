@@ -1,3 +1,6 @@
+#ifndef INITIAL_H
+#define INITIAL_H
+
 #include <cassert>
 #include <array>
 using namespace std;
@@ -23,3 +26,5 @@ void set_initial_conditions(double rhoL, double rhoR,
     }
   }
 }
+
+#endif

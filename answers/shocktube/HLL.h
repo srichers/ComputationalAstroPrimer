@@ -1,4 +1,8 @@
+#ifndef HLL_H
+#define HLL_H
+
 #include <cmath>
+#include "flux.h"
 
 template<int nx>
 array< array<double,nx>, 2> HLL_wave_speeds
@@ -56,3 +60,5 @@ array<array<double,nx>,3> HLL_flux(const array<array<array<double,nx>,3>,2>& pri
   
   return flux;
 }
+
+#endif
