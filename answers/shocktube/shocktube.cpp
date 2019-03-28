@@ -3,7 +3,6 @@
 #include <cmath>
 #include <array>
 #include <cassert>
-#include "operator.h"
 #include "EOS.h"
 #include "initial_conditions.h"
 using namespace std;
