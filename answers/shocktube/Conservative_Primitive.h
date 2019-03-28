@@ -15,11 +15,12 @@ array<array<double,nx>,3> get_primitive(const array<array<double,nx>,3>& conserv
     primitive[1][i] = conservative[1][i]/conservative[0][i];
 
   // pressure
-  for(int i=0; i<nx; i++){
-    double internal_energy_density = 1./conservative[0][i] *
+  array<double,nx> internal_energy_density;
+  for(int i=0; i<nx; i++)
+    internal_energy_density[i] = 1./conservative[0][i] *
       (conservative[2][i] - .5*(conservative[1][i]*conservative[1][i]/conservative[0][i]) );
-    primitive[2][i] = eos.pressure(conservative[0][i], internal_energy_density);
-  }
+    
+  primitive[2] = eos.pressure<nx>(conservative[0], internal_energy_density);
     
   return primitive;
 }
@@ -39,11 +40,10 @@ array<array<double,nx>,3> get_conservative(const array<array<double,nx>,3>& prim
     conservative[1][i] = primitive[0][i]*primitive[1][i];
 
   // total energy density
-  for(int i=0; i<nx; i++){
-    double internal_energy_density = eos.internal_energy_density(primitive[0][i],primitive[2][i]);
-    conservative[2][i] = primitive[0][i] * (.5*primitive[1][i]*primitive[1][i]
-					    + internal_energy_density);
-  }
+  array<double,nx> internal_energy_density = eos.internal_energy_density<nx>(primitive[0],primitive[2]);
+
+  for(int i=0; i<nx; i++)
+    conservative[2][i] = primitive[0][i] * (.5*primitive[1][i]*primitive[1][i] + internal_energy_density[i]);
 
   return conservative;
 }

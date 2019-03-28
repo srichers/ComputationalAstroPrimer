@@ -35,7 +35,7 @@ const int nghost = 3;
 int main(){
   bool passing;
   // [variable index][radial index]
-  array<array<double,nx>, 3> primitive, conservative;
+  array<array<double,nx>, 3> primitive, conservative, tmp;
   // [0=left 1=right][variable index][radial index]
   array< array< array<double,nx-1>, 3>, 2> conservativeLR, primitiveLR;
   
@@ -108,9 +108,15 @@ int main(){
   passing = true;
   EOS eos;
   eos.gamma = 2.;
-  passing = passing && floateq(eos.internal_energy_density(2.,3.),3./2.);
-  passing = passing && floateq(eos.pressure(2.,3.),6.);
-  passing = passing && floateq(eos.soundspeed(2.,3.),sqrt(3.));
+  primitive[0][0] = 2.;
+  primitive[2][0] = 3.;
+  tmp[0] = eos.internal_energy_density<nx>(primitive[0], primitive[2]);
+  passing = passing && floateq(tmp[0][0],3./2.);
+  primitive[1][0] = 3.; // using this for internal energy density
+  tmp[0] = eos.pressure<nx>(primitive[0],primitive[1]);
+  passing = passing && floateq(tmp[0][0],6.);
+  tmp[0] = eos.soundspeed<nx>(primitive[0],primitive[2]);
+  passing = passing && floateq(tmp[0][0],sqrt(3.));
   print_success(passing);
   
   //=========//
@@ -122,7 +128,6 @@ int main(){
   conservative[0][0] = 2;
   conservative[1][0] = 4;
   conservative[2][0] = 6;
-  array<array<double,nx>,3> tmp;
   eos.gamma = 2.;
 
   cout << "Primitive-->Conservative: ";
@@ -162,12 +167,12 @@ int main(){
     print_array<nx,double>(tmp[2]);
   }
 
-  // //================//
-  // // Riemann Solver //
-  // //================//
+  //================//
+  // Riemann Solver //
+  //================//
   // cout << "HLL Wave Speeds: ";
   // passing = true;
-  // array<double,2> wavespeedLR;
+  // array<array<double,nx-1>,2> wavespeedLR;
   // primitive = array<double,3>{1,-4,2};
   // wavespeedLR = HLL_wave_speeds(primitive,primitive, eos);
   // passing = passing && floateq(wavespeedLR[0],-6.);
