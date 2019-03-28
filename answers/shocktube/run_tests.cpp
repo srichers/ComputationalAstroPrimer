@@ -6,7 +6,7 @@
 #include "EOS.h"
 #include "Conservative_Primitive.h"
 #include "flux.h"
-//#include "HLL.h"
+#include "HLL.h"
 using namespace std;
 
 void print_success(bool success){
@@ -170,15 +170,20 @@ int main(){
   //================//
   // Riemann Solver //
   //================//
-  // cout << "HLL Wave Speeds: ";
-  // passing = true;
-  // array<array<double,nx-1>,2> wavespeedLR;
-  // primitive = array<double,3>{1,-4,2};
-  // wavespeedLR = HLL_wave_speeds(primitive,primitive, eos);
-  // passing = passing && floateq(wavespeedLR[0],-6.);
-  // passing = passing && floateq(wavespeedLR[1],-2.);
-  // print_success(passing);
-  // if(!passing) print_array<2,double>(wavespeedLR);
+  cout << "HLL Wave Speeds: ";
+  passing = true;
+  array<array<double,nx-1>,2> wavespeedLR;
+  primitiveLR[0][0][0] = primitiveLR[1][0][0] = 1;
+  primitiveLR[0][1][0] = primitiveLR[1][1][0] = -4;
+  primitiveLR[0][2][0] = primitiveLR[1][2][0] = 2;
+  wavespeedLR = HLL_wave_speeds<nx-1>(primitiveLR, eos);
+  passing = passing && floateq(wavespeedLR[0][0],-6.);
+  passing = passing && floateq(wavespeedLR[1][0],-2.);
+  print_success(passing);
+  if(!passing){
+    print_array<nx-1,double>(wavespeedLR[0]);
+    print_array<nx-1,double>(wavespeedLR[1]);
+  }
 
   // cout << "HLL Flux: ";
   // passing = true;
