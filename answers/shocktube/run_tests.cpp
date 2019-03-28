@@ -6,7 +6,7 @@
 #include "EOS.h"
 #include "Conservative_Primitive.h"
 #include "flux.h"
-#include "HLL.h"
+//#include "HLL.h"
 using namespace std;
 
 void print_success(bool success){
@@ -34,25 +34,27 @@ const int nghost = 3;
 
 int main(){
   bool passing;
-  array<double,3> primitive, conservative;
-
+  // [variable index][radial index]
+  array<array<double,nx>, 3> primitive, conservative;
+  // [0=left 1=right][variable index][radial index]
+  array< array< array<double,nx-1>, 3>, 2> conservativeLR, primitiveLR;
+  
   //====================//
   // Initial Conditions //
   //====================//
   cout << "Initial Conditions: ";
   passing = true;
-  array<double,nx> rho, Eint, px;
-  set_initial_conditions<nx,nghost>(3,3,rho, 3,3,Eint, 3,3,px);
+  set_initial_conditions<nx,nghost>(3,3, 3,3, 3,3, primitive);
   for(int i=nghost; i<nx-2*nghost; i++){
-    passing = passing && floateq(rho [i],3);
-    passing = passing && floateq(Eint[i],3);
-    passing = passing && floateq(px  [i],3);
+    passing = passing && floateq(primitive[0][i],3); // rho
+    passing = passing && floateq(primitive[1][i],3); // vx
+    passing = passing && floateq(primitive[2][i],3); // pressure
   }
   print_success(passing);
   if(!passing){
-    print_array<nx,double>(rho);
-    print_array<nx,double>(Eint);
-    print_array<nx,double>(px);
+    print_array<nx,double>(primitive[0]);
+    print_array<nx,double>(primitive[1]);
+    print_array<nx,double>(primitive[2]);
   }
 
   //=====================//
@@ -60,21 +62,21 @@ int main(){
   //=====================//
   cout << "Boundary Conditions: ";
   passing = true;
-  for(int i=0; i<nx; i++) rho[i] = i;
-  reflecting_boundary_conditions<double,nx,nghost>(rho);
-  passing = passing && floateq(rho[0],5);
-  passing = passing && floateq(rho[1],4);
-  passing = passing && floateq(rho[2],3);
-  passing = passing && floateq(rho[3],3);
-  passing = passing && floateq(rho[4],4);
-  passing = passing && floateq(rho[5],5);
-  passing = passing && floateq(rho[6],6);
-  passing = passing && floateq(rho[7],6);
-  passing = passing && floateq(rho[8],5);
-  passing = passing && floateq(rho[9],4);
+  for(int i=0; i<nx; i++) primitive[0][i] = i;
+  reflecting_boundary_conditions<nx,nghost>(primitive);
+  passing = passing && floateq(primitive[0][0],5);
+  passing = passing && floateq(primitive[0][1],4);
+  passing = passing && floateq(primitive[0][2],3);
+  passing = passing && floateq(primitive[0][3],3);
+  passing = passing && floateq(primitive[0][4],4);
+  passing = passing && floateq(primitive[0][5],5);
+  passing = passing && floateq(primitive[0][6],6);
+  passing = passing && floateq(primitive[0][7],6);
+  passing = passing && floateq(primitive[0][8],5);
+  passing = passing && floateq(primitive[0][9],4);
   print_success(passing);
   if(!passing){
-    print_array<nx,double>(rho);
+    print_array<nx,double>(primitive[0]);
   }
 
   //================//
@@ -82,21 +84,21 @@ int main(){
   //================//
   cout << "Reconstruction: ";
   passing = true;
-  for(int i=0; i<nx; i++) rho[i] = i;
-  array< array<double,nx-1>, 2> rhoLR = piecewise_constant_reconstruct<double,nx>(rho);
-  passing = passing && floateq(rhoLR[0][0],0.) && floateq(rhoLR[1][0],1.);
-  passing = passing && floateq(rhoLR[0][1],1.) && floateq(rhoLR[1][1],2.);
-  passing = passing && floateq(rhoLR[0][2],2.) && floateq(rhoLR[1][2],3.);
-  passing = passing && floateq(rhoLR[0][3],3.) && floateq(rhoLR[1][3],4.);
-  passing = passing && floateq(rhoLR[0][4],4.) && floateq(rhoLR[1][4],5.);
-  passing = passing && floateq(rhoLR[0][5],5.) && floateq(rhoLR[1][5],6.);
-  passing = passing && floateq(rhoLR[0][6],6.) && floateq(rhoLR[1][6],7.);
-  passing = passing && floateq(rhoLR[0][7],7.) && floateq(rhoLR[1][7],8.);
-  passing = passing && floateq(rhoLR[0][8],8.) && floateq(rhoLR[1][8],9.);
+  for(int i=0; i<nx; i++) primitive[0][i] = i;
+  conservativeLR = piecewise_constant_reconstruct<nx>(primitive);
+  passing = passing && floateq(conservativeLR[0][0][0],0.) && floateq(conservativeLR[1][0][0],1.);
+  passing = passing && floateq(conservativeLR[0][0][1],1.) && floateq(conservativeLR[1][0][1],2.);
+  passing = passing && floateq(conservativeLR[0][0][2],2.) && floateq(conservativeLR[1][0][2],3.);
+  passing = passing && floateq(conservativeLR[0][0][3],3.) && floateq(conservativeLR[1][0][3],4.);
+  passing = passing && floateq(conservativeLR[0][0][4],4.) && floateq(conservativeLR[1][0][4],5.);
+  passing = passing && floateq(conservativeLR[0][0][5],5.) && floateq(conservativeLR[1][0][5],6.);
+  passing = passing && floateq(conservativeLR[0][0][6],6.) && floateq(conservativeLR[1][0][6],7.);
+  passing = passing && floateq(conservativeLR[0][0][7],7.) && floateq(conservativeLR[1][0][7],8.);
+  passing = passing && floateq(conservativeLR[0][0][8],8.) && floateq(conservativeLR[1][0][8],9.);
   print_success(passing);
   if(!passing){
-    print_array<nx-1,double>(rhoLR[0]);
-    print_array<nx-1,double>(rhoLR[1]);
+    print_array<nx-1,double>(conservativeLR[0][0]);
+    print_array<nx-1,double>(conservativeLR[1][0]);
   }
 
   //=====//
@@ -114,54 +116,69 @@ int main(){
   //=========//
   // PrimCon //
   //=========//  
-  primitive = array<double,3>{2,2,2};
-  conservative = array<double,3>{2,4,6};
-  array<double,3> tmp;
+  primitive[0][0] = 2;
+  primitive[1][0] = 2;
+  primitive[2][0] = 2;
+  conservative[0][0] = 2;
+  conservative[1][0] = 4;
+  conservative[2][0] = 6;
+  array<array<double,nx>,3> tmp;
   eos.gamma = 2.;
 
   cout << "Primitive-->Conservative: ";
   passing = true;
-  tmp = get_conservative(primitive, eos);
+  tmp = get_conservative<nx>(primitive, eos);
   for(int i=0; i<3; i++)
-    passing = passing && floateq(tmp[i],conservative[i]);
+    passing = passing && floateq(tmp[i][0],conservative[i][0]);
   print_success(passing);
-  if(!passing) print_array<3,double>(tmp);
+  if(!passing){
+    print_array<nx,double>(tmp[0]);
+    print_array<nx,double>(tmp[1]);
+    print_array<nx,double>(tmp[2]);
+  }
 
   cout << "Conservative-->Primitive: ";
   passing = true;
-  tmp = get_primitive(conservative, eos);
+  tmp = get_primitive<nx>(conservative, eos);
   for(int i=0; i<3; i++)
-    passing = passing && floateq(tmp[i],primitive[i]);
+    passing = passing && floateq(tmp[i][0],primitive[i][0]);
   print_success(passing);
-  if(!passing) print_array<3,double>(tmp);
+  if(!passing){
+    print_array<nx,double>(tmp[0]);
+    print_array<nx,double>(tmp[1]);
+    print_array<nx,double>(tmp[2]);
+  }
 
   cout << "Flux: ";
   passing = true;
-  tmp = conservative_flux(primitive, conservative);
-  passing = passing && floateq(tmp[0],4.);
-  passing = passing && floateq(tmp[1],10.);
-  passing = passing && floateq(tmp[2],16.);
+  tmp = conservative_flux<nx>(primitive, conservative);
+  passing = passing && floateq(tmp[0][0],4.);
+  passing = passing && floateq(tmp[1][0],10.);
+  passing = passing && floateq(tmp[2][0],16.);
   print_success(passing);
-  if(!passing) print_array<3,double>(tmp);
+  if(!passing){
+    print_array<nx,double>(tmp[0]);
+    print_array<nx,double>(tmp[1]);
+    print_array<nx,double>(tmp[2]);
+  }
 
-  //================//
-  // Riemann Solver //
-  //================//
-  cout << "HLL Wave Speeds: ";
-  passing = true;
-  array<double,2> wavespeedLR;
-  primitive = array<double,3>{1,-4,2};
-  wavespeedLR = HLL_wave_speeds(primitive,primitive, eos);
-  passing = passing && floateq(wavespeedLR[0],-6.);
-  passing = passing && floateq(wavespeedLR[1],-2.);
-  print_success(passing);
-  if(!passing) print_array<2,double>(wavespeedLR);
+  // //================//
+  // // Riemann Solver //
+  // //================//
+  // cout << "HLL Wave Speeds: ";
+  // passing = true;
+  // array<double,2> wavespeedLR;
+  // primitive = array<double,3>{1,-4,2};
+  // wavespeedLR = HLL_wave_speeds(primitive,primitive, eos);
+  // passing = passing && floateq(wavespeedLR[0],-6.);
+  // passing = passing && floateq(wavespeedLR[1],-2.);
+  // print_success(passing);
+  // if(!passing) print_array<2,double>(wavespeedLR);
 
-  cout << "HLL Flux: ";
-  passing = true;
-  array< array<double,3>, 2> primitiveLR, conservativeLR;
-  array<double,3> riemann_flux = HLL_flux(primitiveLR, conservativeLR, wavespeedLR);
-  print_success(passing);
+  // cout << "HLL Flux: ";
+  // passing = true;
+  // array<double,3> riemann_flux = HLL_flux(primitiveLR, conservativeLR, wavespeedLR);
+  // print_success(passing);
   
   return 0;
 }

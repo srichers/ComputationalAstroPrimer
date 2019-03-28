@@ -2,15 +2,17 @@
 
 // this should get the values at the left (0) and right (1) side of each cell
 // This is trivial for piecewise constant, but not so trivial for higher-order schemes.
-template<typename T, int nx>
-array< array<T,nx-1>, 2> piecewise_constant_reconstruct(array<T,nx> input){
+template<int nx>
+array< array< array<double,nx-1>, 3>, 2> piecewise_constant_reconstruct(array< array<double,nx>,3>& conservative){
 
-  array< array<T,nx-1> ,2> output;
+  array< array< array<double,nx-1>, 3>, 2> conservativeLR;
 
-  for(int i=0; i<nx-1; i++){
-    output[0][i] = input[i];
-    output[1][i] = input[i+1];
+  for(int v=0; v<3; v++){
+    for(int i=0; i<nx-1; i++){
+      conservativeLR[0][v][i] = conservative[v][i  ];
+      conservativeLR[1][v][i] = conservative[v][i+1];
+    }
   }
 
-  return output;
+  return conservativeLR;
 }

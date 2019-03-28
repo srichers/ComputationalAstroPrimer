@@ -5,23 +5,24 @@ double poison = 0./0.;
 
 // set the initial conditions
 template<int nx,int nghost>
-void set_initial_conditions(double rhoL, double rhoR, array<double,nx>& rho,
-			      double EintL, double EintR, array<double,nx>& Eint,
-			      double pxL, double pxR, array<double,nx>& px){
+void set_initial_conditions(double rhoL, double rhoR,
+			    double vxL, double vxR,
+			    double pressL, double pressR,
+			    array< array<double,nx>, 3>& primitive){
   // make sure our array is big enough
   assert(nx > 2*nghost);
   
   // set left and right states
   for(int i=0; i<nx; i++){
     if(i<nx/2){
-      rho[i] = rhoL;
-      Eint[i] = EintL;
-      px[i] = pxL;
+      primitive[0][i] = rhoL;
+      primitive[1][i] = vxL;
+      primitive[2][i] = pressL;
     }
     else{
-      rho[i] = rhoR;
-      Eint[i] = EintR;
-      px[i] = pxR;
+      primitive[0][i] = rhoR;
+      primitive[1][i] = vxR;
+      primitive[2][i] = pressR;
     }
   }
 }

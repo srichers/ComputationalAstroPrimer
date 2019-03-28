@@ -1,39 +1,49 @@
 #include <array>
-// primitive: [density, velocity, pressure]
-// conservative: [density, momentum density, energy density]
 
 // given conservative variables, return primitive variables
-array<double,3> get_primitive(const array<double,3>& conservative, const EOS& eos){
-  array<double,3> prim;
+template<int nx>
+array<array<double,nx>,3> get_primitive(const array<array<double,nx>,3>& conservative,
+					const EOS& eos){
+  array<array<double,nx>,3> primitive;
 
   // density
-  prim[0] = conservative[0];
+  for(int i=0; i<nx; i++)
+    primitive[0][i] = conservative[0][i];
 
   // velocity
-  prim[1] = conservative[1]/conservative[0];
+  for(int i=0; i<nx; i++)
+    primitive[1][i] = conservative[1][i]/conservative[0][i];
 
   // pressure
-  double internal_energy_density = 1./conservative[0] *
-    (conservative[2] - .5*(conservative[1]*conservative[1]/conservative[0]) );
-  prim[2] = eos.pressure(conservative[0], internal_energy_density);
-
-  return prim;
+  for(int i=0; i<nx; i++){
+    double internal_energy_density = 1./conservative[0][i] *
+      (conservative[2][i] - .5*(conservative[1][i]*conservative[1][i]/conservative[0][i]) );
+    primitive[2][i] = eos.pressure(conservative[0][i], internal_energy_density);
+  }
+    
+  return primitive;
 }
 
 // given primitive variables, return conservative variables
-array<double,3> get_conservative(const array<double,3>& primitive, const EOS& eos){
-  array<double,3> con;
+template<int nx>
+array<array<double,nx>,3> get_conservative(const array<array<double,nx>,3>& primitive,
+					   const EOS& eos){
+  array<array<double,nx>,3> conservative;
 
   // density
-  con[0] = primitive[0];
+  for(int i=0; i<nx; i++)
+    conservative[0][i] = primitive[0][i];
 
   // momentum density
-  con[1] = primitive[0]*primitive[1];
+  for(int i=0; i<nx; i++)
+    conservative[1][i] = primitive[0][i]*primitive[1][i];
 
   // total energy density
-  double internal_energy_density = eos.internal_energy_density(primitive[0],primitive[2]);
-  con[2] = primitive[0] * (.5*primitive[1]*primitive[1]
-			   + internal_energy_density);
+  for(int i=0; i<nx; i++){
+    double internal_energy_density = eos.internal_energy_density(primitive[0][i],primitive[2][i]);
+    conservative[2][i] = primitive[0][i] * (.5*primitive[1][i]*primitive[1][i]
+					    + internal_energy_density);
+  }
 
-  return con;
+  return conservative;
 }
