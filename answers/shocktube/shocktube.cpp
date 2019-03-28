@@ -13,10 +13,10 @@
 #include "misc.h"
 using namespace std;
 
-const int nx = 52;
+const int nx = 102;
 const int nghost = 1;
 const double dx = 1./nx;
-const double tend = 0.1;
+const double tend = 0.25;
 const double courant_factor = 0.1;
 const double adiabatic_index = 1.4;
 const double PL=1.0, PR=0.1, vL=0, vR=0, rhoL=1.0, rhoR=0.125;
