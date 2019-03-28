@@ -3,9 +3,15 @@
 
 #include <array>
 
+//===================//
+// conservative_flux //
+//===================//
+// return conservative flux given primitive and conservative variables
+// call with:
+//     flux = conservative_flux<nx>(primitive,conservative);
 template<int nx>
-array<array<double,nx>,3> conservative_flux(const array<array<double,nx>,3> primitive,
-					    const array<array<double,nx>,3> conservative){
+array<array<double,nx>,3> conservative_flux(const array<array<double,nx>,3>& primitive,
+					    const array<array<double,nx>,3>& conservative){
   array<array<double,nx>,3> flux;
 
   // density flux

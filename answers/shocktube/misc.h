@@ -1,6 +1,12 @@
 #ifndef MISC_H
 #define MISC_H
 
+//=======//
+// print //
+//=======//
+// output current variables to file
+// call with:
+//     print<nx>(output, it, t, primitive, conservative);
 template<size_t nx>
 void print(ofstream& output, int it, double t,
 	   const array<array<double,nx>,3>& primitive,

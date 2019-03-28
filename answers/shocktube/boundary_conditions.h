@@ -3,7 +3,10 @@
 
 #include <array>
 
-// apply reflecting boundary conditions
+//================================//
+// reflecting_boundary_conditions //
+//================================//
+/// apply reflecting boundary conditions
 // ghost zones are literally a reflection of the non-ghost zones
 // call with:
 //     reflecting_boundary_conditions<nx,nghost>(conservative);

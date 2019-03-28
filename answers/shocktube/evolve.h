@@ -3,6 +3,13 @@
 
 #include <array>
 
+//==================//
+// dConservative_dt //
+//==================//
+// return rate of change of conservative variables at cell centers
+// given conservative fluxes at cell interfaces
+// call with:
+//     dcons_dt = dConservative_dt<nx>(flux, dx)
 template<int nx>
 array<array<double,nx>,3> dConservative_dt(const array<array<double,nx-1>,3>& flux,
 					   const double dx){

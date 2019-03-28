@@ -13,13 +13,16 @@
 #include "misc.h"
 using namespace std;
 
-const int nx = 102;
-const int nghost = 1;
-const double dx = 1./nx;
-const double tend = 0.25;
-const double courant_factor = 0.1;
-const double adiabatic_index = 1.4;
-const double PL=1.0, PR=0.1, vL=0, vR=0, rhoL=1.0, rhoR=0.125;
+// simulation parameters
+const int nx = 102;                 // number of zones, including ghost zones
+const int nghost = 1;               // number of ghost zones at each end
+const double dx = 1./nx;            // grid spacing
+const double tend = 0.25;           // end time of the simulation
+const double courant_factor = 0.5;  // ratio of timestep to max stable timestep
+const double adiabatic_index = 1.4; // equaton of state adiabatic index
+const double PL=1.0, PR=0.1;        // left and right initial pressures
+const double vL=0, vR=0;            // left and right initial velocities
+const double rhoL=1.0, rhoR=0.125;  // left and right initial densities
 
 int main(){
   // evolved variables. Assume tube cross-section of 1
@@ -29,7 +32,9 @@ int main(){
   // temporary variables - left and right side of interfaces
   // [0=left 1=right][variable index][radial index]
   array< array< array<double,nx-1>, 3>, 2> conservativeLR, primitiveLR;
-  array<array<double,nx-1>, 3> flux, dc_dt;
+
+  // other temporary variables
+  array<array<double,nx-1>, 3> flux;
   array<array<double,nx>, 3> dcons_dt;
   double max_wavespeed;
   
@@ -38,7 +43,7 @@ int main(){
   
   // set up the initial conditions
   // rho left/right, vx left/right, pressure left/right
-  set_initial_conditions<nx>(rhoL, rhoR, vL, vR, PL, PR, primitive);
+  primitive = set_initial_conditions<nx>(rhoL, rhoR, vL, vR, PL, PR);
   conservative = get_conservative<nx>(primitive, eos);
   
   // set up file

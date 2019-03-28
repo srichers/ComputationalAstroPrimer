@@ -3,6 +3,9 @@
 
 #include <array>
 
+//===============//
+// get_primitive //
+//===============//
 // given conservative variables, return primitive variables
 // call with:
 //     primitive = get_primitive<nx>(conservative, eos);
@@ -29,6 +32,9 @@ array<array<double,nx>,3> get_primitive(const array<array<double,nx>,3>& conserv
   return primitive;
 }
 
+//==================//
+// get_conservative //
+//==================//
 // given primitive variables, return conservative variables
 // call with:
 //     conservative = get_conservative<nx>(primitive, eos);
