@@ -9,6 +9,7 @@
 #include "reconstruct.h"
 #include "HLL.h"
 #include "evolve.h"
+#include "boundary_conditions.h"
 #include "misc.h"
 using namespace std;
 
@@ -76,6 +77,9 @@ int main(){
     for(int v=0; v<3; v++)
       for(int i=0; i<nx; i++)
 	conservative[v][i] += dt * dcons_dt[v][i];
+
+    // apply boundary conditions and map to primitive
+    reflecting_boundary_conditions<nx,nghost>(conservative);
     primitive = get_primitive<nx>(conservative, eos);
     
     // output the fluid data
