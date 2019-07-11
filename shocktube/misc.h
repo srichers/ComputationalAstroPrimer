@@ -14,7 +14,7 @@ void print(ofstream& output, int it, double t,
   for(int i=0; i<nx; i++){
     output << it << "\t" << t << "\t" << i << "\t";
     for(int v=0; v<3; v++) output << primitive[v][i] << "\t";
-    for(int v=1; v<3; v++) output << primitive[v][i] << "\t";
+    for(int v=1; v<3; v++) output << conservative[v][i] << "\t";
     output << endl;
   }
   output << endl;
