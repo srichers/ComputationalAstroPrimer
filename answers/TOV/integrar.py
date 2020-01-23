@@ -33,20 +33,34 @@ def integrar_RK2(r0, Presion0, MasaTotalInterna0, dr, ede, tolerancia):
     MasaTotalInterna2 = MasaTotalInterna0 + dr * dMdr1
     DensidadTotal2 = ede.calcDensidadTotal(Presion2)
 
-    #print("r",r0,r1,r2)
-    #print("Densidad",DensidadTotal0, DensidadTotal1, DensidadTotal2)
-    #print("Presion",Presion0, Presion1, Presion2)
-    #print("Masa",MasaTotalInterna0,MasaTotalInterna1,MasaTotalInterna2)
-    
     # calcular error, adjustar paso de longitud
     errorPresion          = abs(dPdr0 - dPdr1) / abs(dPdr0+dPdr1)
     errorMasaTotalInterna = abs(dMdr0 - dMdr1) / abs(dMdr0+dMdr1)
     error = max(errorPresion, errorMasaTotalInterna)
     dr = dr * (tolerancia/error)
-    #print("dPdr",dPdr0, dPdr1)
-    #print("dMdr",dMdr0, dMdr1)
-    #print(errorPresion, errorMasaTotalInterna, dr)
     
     # queremos usar el paso 2
     return r2, Presion2, MasaTotalInterna2, dr
         
+def calcularRadioYMasa(dr, tolerancia, DensidadDeMasaAlCentro, DensidadDeMasa_parar, ede, imprimir=False):
+    # condiciones iniciales (al centro de la estrella)
+    r = dr
+    DensidadDeMasa = DensidadDeMasaAlCentro
+    Presion = ede.calcPresion(DensidadDeMasa) # erg/ccm
+    DensidadTotal = ede.calcDensidadTotal(Presion) # g/ccm
+    MasaTotalInterna = 4./3. * np.pi * r**3 * DensidadTotal # g
+    
+    # hacer pasos hasta la densidad de masa esta demasiado pequeno
+    i=0
+    while DensidadDeMasa > DensidadDeMasa_parar:
+        r, Presion, MasaTotalInterna, dr = integrar_RK2(r, Presion, MasaTotalInterna, dr, ede, tolerancia)
+        DensidadDeMasa = ede.calcDensidadDeMasa(Presion)
+        
+        # imprimir el radio (km), la densidad de masa (g/ccm), y la masa total interna (g)
+        if imprimir and i%1000==0:
+            print(i, r/km, DensidadDeMasa, MasaTotalInterna/Msol)
+        i = i+1
+    if imprimir:
+        print(i, r/km, DensidadDeMasa, MasaTotalInterna/Msol)
+        
+    return r, MasaTotalInterna

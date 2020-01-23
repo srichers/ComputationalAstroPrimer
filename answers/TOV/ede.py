@@ -68,3 +68,4 @@ class EDE:
 
         # guardar el grafico
         plt.savefig("ede.pdf")
+        print("Grafico ede.pdf cargado.")
