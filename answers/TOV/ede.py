@@ -5,10 +5,6 @@ from units import *
 
 class EDE:
     def __init__(self, DensidadDeMasaMin, DensidadDeMasaMax, npoints):
-        self.log10Presion = np.zeros(npoints)
-        self.log10DensidadDeMasa = np.zeros(npoints)
-        self.log10DensidadDeEnergia = np.zeros(npoints)
-
         # crear array de densidad de masa
         log10DensidadDeMasaMin = np.log10(DensidadDeMasaMin)
         log10DensidadDeMasaMax = np.log10(DensidadDeMasaMax)
@@ -33,16 +29,28 @@ class EDE:
         self.log10DensidadDeMasa    = np.log10(DensidadDeMasa)
         self.log10Presion           = np.log10(Presion)
         self.log10DensidadDeEnergia = np.log10(DensidadDeEnergia)
-        
-    def Presion(self,DensidadDeMasaEn):
-        return np.exp( interpolar.interpolar(np.log10(DensidadDeMasaEn), self.log10DensidadDeMasa, self.log10Presion))
-        
-    def DensidadDeMasa(self,PresionEn):
-        return np.exp( interpolar.interpolar(np.log10(PresionEn), self.log10Presion, self.log10DensidadDeMasa) )
 
-    def densidadDeEnergia(self,presion):
-        return np.exp( interpolar.interpolar(PresionEn, self.log10Presion, self.log10DensidadDeEnergia) )
+    def calcPresion(self,DensidadDeMasa): # erg/ccm
+        x = np.log10(DensidadDeMasa)
+        xgrid = self.log10DensidadDeMasa
+        ygrid = self.log10Presion
+        return 10**interpolar.interpolar(x, xgrid, ygrid)
+        
+    def calcDensidadDeMasa(self,Presion): # g/ccm
+        x = np.log10(Presion)
+        xgrid = self.log10Presion
+        ygrid = self.log10DensidadDeMasa
+        return 10**interpolar.interpolar(x, xgrid, ygrid)
 
+    def calcDensidadDeEnergia(self, Presion): # erg/ccm
+        x = np.log10(Presion)
+        xgrid = self.log10Presion
+        ygrid = self.log10DensidadDeEnergia
+        return 10**interpolar.interpolar(x, xgrid, ygrid)
+    
+    def calcDensidadTotal(self, Presion): # g/ccm
+        return self.calcDensidadDeEnergia(Presion)/c**2 + self.calcDensidadDeMasa(Presion)
+    
     def hacerGrafico(self):
         # hacer las curvas
         pres,  = plt.loglog(10**self.log10DensidadDeMasa, 10**self.log10Presion)
