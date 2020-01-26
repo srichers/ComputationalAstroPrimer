@@ -1,21 +1,21 @@
 import numpy as np
 import bisect
     
-def interpolar(xin, xgrid, ygrid):
+def interpolar(xEn, xCuadricula, yCuadricula):
     # get the upper indes
-    i = bisect.bisect_right(xgrid, xin, lo=0, hi=len(xgrid))
+    i = bisect.bisect_right(xCuadricula, xEn, lo=0, hi=len(xCuadricula))
 
     # check for degenerate case
-    yRight = ygrid[i  ];
-    xRight = xgrid[i  ];
-    yLeft  = ygrid[i-1];
-    xLeft  = xgrid[i-1];
-    if(yRight == yLeft):
-        return yRight;
+    yDerecha    = yCuadricula[i  ];
+    xDerecha    = xCuadricula[i  ];
+    yIzquierda  = yCuadricula[i-1];
+    xIzquierda  = xCuadricula[i-1];
+    if(yDerecha == yIzquierda):
+        return yDerecha;
 
     # do the interpolation
-    slope = (yRight-yLeft) / (xRight-xLeft);
-    yout = yLeft + (xin-xLeft)*slope;
-    return yout;
+    inclinacion = (yDerecha-yIzquierda) / (xDerecha-xIzquierda);
+    ySalida = yIzquierda + (xEn-xIzquierda)*inclinacion;
+    return ySalida;
 
 
