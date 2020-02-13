@@ -3,12 +3,12 @@ import ede
 from units import *
 
 # Derivadas
-def dPresion_dr(r, DensidadTotal, Presion, MasaTotalInterna): # cm, g/ccm, g, erg/ccm, erg/ccm
+def dPresion_dr(r, DensidadTotal, Presion, MasaTotalInterna): # cm, g/ccm, erg/ccm, g
     result =  -G*MasaTotalInterna/r**2 * (DensidadTotal + Presion/c**2) * (1.0 + 4.*np.pi*Presion*r**3/(MasaTotalInterna*c**2)) / (1. - 2.*G*MasaTotalInterna/(r*c**2))
-    return result
+    return result # erg/ccm/cm
     
-def dMasaTotalInterna_dr(r, DensidadTotal):
-    return 4.*np.pi*r**2 * DensidadTotal
+def dMasaTotalInterna_dr(r, DensidadTotal): # cm, g/ccm
+    return 4.*np.pi*r**2 * DensidadTotal # g
 
     
 # RK2 Integrador
@@ -31,7 +31,6 @@ def integrar_RK2(r0, Presion0, MasaTotalInterna0, dr, ede, tolerancia):
     dMdr1 = dMasaTotalInterna_dr(r1, DensidadTotal1)
     Presion2          =          Presion0 + dr * dPdr1
     MasaTotalInterna2 = MasaTotalInterna0 + dr * dMdr1
-    DensidadTotal2 = ede.calcDensidadTotal(Presion2)
 
     # calcular error, adjustar paso de longitud
     errorPresion          = abs(dPdr0 - dPdr1) / abs(dPdr0+dPdr1)
