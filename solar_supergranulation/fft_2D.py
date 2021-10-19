@@ -2,22 +2,41 @@ import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-from skimage.filters import window
+import skimage.filters
 
-# granule length scales based on Rincon 2018 "The Sun's Supergranulation"
+#========#
+# STEP 1 #
+#========#
+# Read the introductino of Riutord et al. (2010) "On the Power Spectrum of Solar Surface Flows"
+# Fill in the range of length scales that solar supergranulation occurs on in units of megameters.
+# These are the numbers we will compare our results against.
 Mm = 1e8 # cm
 l_supergranulation = np.array([ 12.5,  75])# Fig. 5, Riutord+(2010) "On the Power Spectrum..."
-l_granulation      = np.array([  1.5, 2.0]) # cm (0.2 hr lifetime)
-Rsun = 6.957e10/Mm # cm
+l_granulation      = np.array([  0.5, 2.0]) # Mm
 
-# read in the data
+#========#
+# STEP 2 #
+#========#
+# Read in the data using imread and set the data to the variable f
+# The second line stores the number of pixels in the x and y directions
+# Run the script and save the result as "step2.pdf"
 f = plt.imread("sample.tif")
 Nx,Ny = np.shape(f)
 
-# normalize the data to a brightness from 0 to 1
+#========#
+# STEP 3 #
+#========#
+# normalize the data to a brightness from 0 to 1 by dividing by the maximum brightness
+# Run the script and save the result as "step3.pdf"
 #f = f / np.max(f)
 
-# get box bounding the sun
+#========#
+# STEP 4 #
+#========#
+# Cut off extra space around the sun
+# Just un-comment the following lines.
+# This works by finding the box containing all pixels more than 15% as bright as the brightest pixel
+# Run the script and save the result as "step4.pdf"
 #threshold = 0.15
 #max_x = np.squeeze(np.max(f, axis=1))
 #max_y = np.squeeze(np.max(f, axis=0))
@@ -30,42 +49,89 @@ Nx,Ny = np.shape(f)
 #f = f[i0:i1, j0:j1]
 #Nx,Ny = np.shape(f)
 
-# make x and y arrays (units of Mm)
+#========#
+# STEP 5 #
+#========#
+# make arrays for x and y in units of megameters
+# The size of the diameter of the sun.
+# Run the script and save the result as "step5.pdf"
+#Rsun = 6.957e10/Mm # Mm
 #x = np.arange(Nx)/Nx * 2.*Rsun
 #y = np.arange(Ny)/Ny * 2.*Rsun
 
+#========#
+# STEP 8 #
+#========#
+# Cut 1/4 of the image around the whole border.
+# This gets rid of any empty space in the image.
 # refine the area to 1/4 of the size of the sun
+# Run the script and save the result as "step8.pdf"
 #border_cut = Nx//4
-#i0 =   border_cut
+#i0 =      border_cut
 #i1 = Nx - border_cut
-#j0 =   border_cut
+#j0 =      border_cut
 #j1 = Ny - border_cut
 #f = f[i0:i1, j0:j1]
 #x = x[i0:i1]
 #y = y[j0:j1]
 #Nx,Ny = np.shape(f)
 
-# Randomize the data to see the impact of the window function
+#=========#
+# STEP 10 #
+#=========#
+# Skip over this step until steps 1-9 are done
+# Replace the image data with an array of random numbers using np.random.rand
+# We will use this to judge what part of the power spectrum is an artifact of the window function
+# Run the script and save the result as "step10.pdf"
 #f = np.random.rand(Nx,Ny)
 
-# (d) Apply a window function to the data
+#========#
+# STEP 9 #
+#========#
+# Apply a window function to the data
+# We will use the Kaiser window with a parameter of 14
+# Use the skimage.filters.window function
+# Run the script and save the result as "step9.pdf"
 #window_function = ('kaiser', 14)
-#f = f * window(window_function, f.shape)
+#f = f * skimage.filters.window(window_function, f.shape)
 
-# (b) Calculate fft(k) using scipy.fft.fftn
+#========#
+# STEP 6 #
+#========#
+# Calculate the fourier transform using np.fft.fftn
+# Divide the result by (Nx * Ny) so it does not depend on the number of pixels
 #fft = np.fft.fftn(f) / (Nx * Ny)
 
+# Define the maximum possible wavenumber based on the Nyquist theorem.
+# This should be 2*pi / (twice the pixel size)
 #kmax_x = np.pi / (x[1] - x[0])
 #kmax_y = np.pi / (y[1] - y[0])
 
+# Define the wavenumber arrays using np.fft.fftfreq.
+# Convert the wavenumber arrays from code units (the largest wavenumber will be 0.5) to physical units (the largest wavenumber should  be the maximum wavenumber you defined above.
 #kx = np.fft.fftfreq(Nx) * 2.*kmax_x
 #ky = np.fft.fftfreq(Ny) * 2.*kmax_y
 
-# (c) Compute the 1D Power Spectrum
+# Run the script and save the result as "step6.pdf"
+
+#========#
+# STEP 7 #
+#========#
+# Compute the power spectrum
+# First, we need |fft|^2 for every value of (kx, ky)
 #fft2 = np.abs(fft)**2
+
+# Second, we need the value of |k| for every value of (kx, ky)
 #kmag = np.sqrt(kx[:,np.newaxis]**2 + ky[np.newaxis,:]**2)
+
+# Third, we need to define the k grid we will use for our histogram.
+# We will just use the kx array, but only include the positive values of kx
 #kgrid = kx[np.where(kx>=0)]
+
+# Finally, use np.histogram to add up all of the "Fourier power" in each k bin
 #power_spectrum, kgrid = np.histogram(kmag.flatten(), kgrid, weights=fft2.flatten())
+
+# Run the script and save the result as "step7.pdf"
 
 #====================================#
 # NO NEED TO MODIFY BELOW THIS POINT #
