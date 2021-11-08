@@ -4,17 +4,15 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 import skimage.filters
 
-# NOTE: all distance units EVERYWHERE should be in megameters (Mm)
-
 #========#
 # STEP 1 #
 #========#
-# Read the introduction and Fig. 5 of Riutord et al. (2010) "On the Power Spectrum of Solar Surface Flows"
+# Read the introduction of Riutord et al. (2010) "On the Power Spectrum of Solar Surface Flows"
 # Fill in the range of length scales that solar supergranulation occurs on in units of megameters.
 # These are the numbers we will compare our results against.
 Mm = 1e8 # cm
-#l_supergranulation = np.array([ FILL_ME_IN, FILL_ME_IN])
-#l_granulation      = np.array([ FILL_ME_IN, FILL_ME_IN])
+#l_supergranulation = np.array([ 12.5,  75])# Fig. 5, Riutord+(2010) "On the Power Spectrum..."
+#l_granulation      = np.array([  0.5, 2.0]) # Mm
 
 #========#
 # STEP 2 #
@@ -30,7 +28,7 @@ Nx,Ny = np.shape(f)
 #========#
 # normalize the data to a brightness from 0 to 1 by dividing by the maximum brightness
 # Run the script and save the result as "step3.pdf"
-#f = f / FILL_ME_IN
+#f = f / np.max(f)
 
 #========#
 # STEP 4 #
@@ -39,15 +37,16 @@ Nx,Ny = np.shape(f)
 # Just un-comment the following lines.
 # This works by finding the box containing all pixels more than 15% as bright as the brightest pixel
 # Run the script and save the result as "step4.pdf"
-#max_x = np.squeeze(np.max(f, axis=FILL_ME_IN))
-#max_y = np.squeeze(np.max(f, axis=FILL_ME_IN))
-#xlocs = np.squeeze(np.where(FILL_ME_IN))
-#ylocs = np.squeeze(np.where(FILL_ME_IN))
-#i0 = xlocs[FILL_ME_IN]
-#i1 = xlocs[FILL_ME_IN]
-#j0 = ylocs[FILL_ME_IN]
-#j1 = ylocs[FILL_ME_IN]
-#f = f[FILL_ME_IN:FILL_ME_IN, FILL_ME_IN:FILL_ME_IN]
+threshold = 0.15
+#max_x = np.squeeze(np.max(f, axis=1))
+#max_y = np.squeeze(np.max(f, axis=0))
+#xlocs = np.squeeze(np.where(max_x>threshold))
+#ylocs = np.squeeze(np.where(max_y>threshold))
+#i0 = xlocs[0]
+#i1 = xlocs[-1]
+#j0 = ylocs[0]
+#j1 = ylocs[-1]
+#f = f[i0:i1, j0:j1]
 #Nx,Ny = np.shape(f)
 
 #========#
@@ -56,9 +55,9 @@ Nx,Ny = np.shape(f)
 # make arrays for x and y in units of megameters
 # The size of the diameter of the sun.
 # Run the script and save the result as "step5.pdf"
-#Rsun = FILL_ME_IN
-#x = FILL_ME_IN
-#y = FILL_ME_IN
+#Rsun = 6.957e10/Mm # Mm
+#x = np.arange(Nx)/Nx * 2.*Rsun
+#y = np.arange(Ny)/Ny * 2.*Rsun
 
 #========#
 # STEP 8 #
@@ -68,13 +67,13 @@ Nx,Ny = np.shape(f)
 # refine the area to 1/4 of the size of the sun
 # Run the script and save the result as "step8.pdf"
 #border_cut = Nx//4
-#i0 = FILL_ME_IN
-#i1 = FILL_ME_IN
-#j0 = FILL_ME_IN
-#j1 = FILL_ME_IN
-#f = f[FILL_ME_IN:FILL_ME_IN, FILL_ME_IN:FILL_ME_IN]
-#x = x[FILL_ME_IN:FILL_ME_IN]
-#y = y[FILL_ME_IN:FILL_ME_IN]
+#i0 =      border_cut
+#i1 = Nx - border_cut
+#j0 =      border_cut
+#j1 = Ny - border_cut
+#f = f[i0:i1, j0:j1]
+#x = x[i0:i1]
+#y = y[j0:j1]
 #Nx,Ny = np.shape(f)
 
 #=========#
@@ -84,7 +83,7 @@ Nx,Ny = np.shape(f)
 # Replace the image data with an array of random numbers using np.random.rand
 # We will use this to judge what part of the power spectrum is an artifact of the window function
 # Run the script and save the result as "step10.pdf"
-#f = FILL_ME_IN
+#f = np.random.rand(Nx,Ny)
 
 #========#
 # STEP 9 #
@@ -93,29 +92,25 @@ Nx,Ny = np.shape(f)
 # We will use the Kaiser window with a parameter of 14
 # Use the skimage.filters.window function
 # Run the script and save the result as "step9.pdf"
-# use the function skimage.filters.window
 #window_function = ('kaiser', 14)
-#f = FILL_ME_IN
+#f = f * skimage.filters.window(window_function, f.shape)
 
 #========#
 # STEP 6 #
 #========#
 # Calculate the fourier transform using np.fft.fftn
-# use the function np.fft.fftn
 # Divide the result by (Nx * Ny) so it does not depend on the number of pixels
-#fft = FILL_ME_IN
+#fft = np.fft.fftn(f) / (Nx * Ny)
 
 # Define the maximum possible wavenumber based on the Nyquist theorem.
 # This should be 2*pi / (twice the pixel size)
-# The values should be in 1/Mm
-#kmax_x = FILL_ME_IN
-#kmax_y = FILL_ME_IN
+#kmax_x = np.pi / (x[1] - x[0])
+#kmax_y = np.pi / (y[1] - y[0])
 
 # Define the wavenumber arrays using np.fft.fftfreq.
 # Convert the wavenumber arrays from code units (the largest wavenumber will be 0.5) to physical units (the largest wavenumber should  be the maximum wavenumber you defined above.
-# use the function np.fft.fftfreq
-#kx = FILL_ME_IN
-#ky = FILL_ME_IN
+#kx = np.fft.fftfreq(Nx) * 2.*kmax_x
+#ky = np.fft.fftfreq(Ny) * 2.*kmax_y
 
 # Run the script and save the result as "step6.pdf"
 
@@ -124,21 +119,17 @@ Nx,Ny = np.shape(f)
 #========#
 # Compute the power spectrum
 # First, we need |fft|^2 for every value of (kx, ky)
-# use the function np.abs
-#fft2 = FILL_ME_IN
+#fft2 = np.abs(fft)**2
 
 # Second, we need the value of |k| for every value of (kx, ky)
-# use np.newaxis and the function np.sqrt
-#kmag = FILL_ME_IN
+#kmag = np.sqrt(kx[:,np.newaxis]**2 + ky[np.newaxis,:]**2)
 
 # Third, we need to define the k grid we will use for our histogram.
 # We will just use the kx array, but only include the positive values of kx
-# use the function np.where
-#kgrid = kx[FILL_ME_IN]
+#kgrid = kx[np.where(kx>=0)]
 
 # Finally, use np.histogram to add up all of the "Fourier power" in each k bin
-# use flatten() on all input arrays to remove unit-sized dimensions
-#power_spectrum, kgrid = np.histogram(FILL_ME_IN, FILL_ME_IN, weights=FILL_ME_IN)
+#power_spectrum, kgrid = np.histogram(kmag.flatten(), kgrid, weights=fft2.flatten())
 
 # Run the script and save the result as "step7.pdf"
 
