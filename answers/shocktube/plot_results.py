@@ -67,7 +67,7 @@ axes[1].set_ylabel(r"$\delta P$ (\% of max)")
 axes[2].set_ylabel(r"$\delta E$ (\%)")
 
 for ax in axes:
-    ax.set_ylim(1e-6,1)
+    ax.set_ylim(top=1)
     ax.set_xlim(0,tlist[-1])
     ax.minorticks_on()
     ax.tick_params(axis='both',which="both", direction="in",top=True,right=True)
