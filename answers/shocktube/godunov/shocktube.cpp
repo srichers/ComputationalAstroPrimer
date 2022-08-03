@@ -14,15 +14,18 @@
 using namespace std;
 
 // simulation parameters
-const int nx = 1002;                 // number of zones, including ghost zones
+const int nx_valid = 100;           // number of zones in domain
 const int nghost = 1;               // number of ghost zones at each end
-const double dx = 1./nx;            // grid spacing
 const double tend = 0.25;           // end time of the simulation
 const double courant_factor = 0.5;  // ratio of timestep to max stable timestep
 const double adiabatic_index = 1.4; // equaton of state adiabatic index
 const double PL=1.0, PR=0.1;        // left and right initial pressures
 const double vL=0, vR=0;            // left and right initial velocities
 const double rhoL=1.0, rhoR=0.125;  // left and right initial densities
+
+// derived parameters
+const int nx = nx_valid + 2*nghost; // number of zones, including ghost zones
+const double dx = 1./nx_valid;      // grid spacing
 
 int main(){
   // evolved variables. Assume tube cross-section of 1
