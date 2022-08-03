@@ -62,9 +62,9 @@ axes[0].semilogy(tlist,Merror,"r")
 axes[1].semilogy(tlist,Perror,"g")
 axes[2].semilogy(tlist,Eerror,"b")
 
-axes[0].set_ylabel(r"$\delta M$ (\%)")
-axes[1].set_ylabel(r"$\delta P$ (\% of max)")
-axes[2].set_ylabel(r"$\delta E$ (\%)")
+axes[0].set_ylabel(r"$\delta M/M_0$")
+axes[1].set_ylabel(r"$\delta P/P_\mathrm{max}$")
+axes[2].set_ylabel(r"$\delta E/E_0$")
 
 for ax in axes:
     ax.set_ylim(top=1)
