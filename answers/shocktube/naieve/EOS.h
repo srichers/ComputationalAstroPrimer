@@ -1,24 +1,70 @@
+#ifndef EOS_H
+#define EOS_H
+
 #include <array>
+#include <cmath>
 using namespace std;
 
-// EOS class for ideal gas (P = nkT). k is assumed to be 1.
-// for now, assume m=1 so rho=n
+// EOS class for ideal gas [P = eps*rho(gamma-1)]
 class EOS{
  public:
-  template<size_t nx>
-  array<double,nx> pressure(const array<double,nx> rho, const array<double,nx> Eint) const{
-    array<double,nx> result = 2./3. * Eint;
-    return result;
+  double gamma; // adiabatic index
+
+  //=================//
+  // EOS constructor //
+  //=================//
+  // When you make and EOS, you have to give it an adiabatic index
+  // call with:
+  //      EOS eos(adiabatic_index);
+ EOS(double in_gamma):gamma(in_gamma) {}
+
+  //=========================//
+  // internal_energy_density //
+  //=========================//
+  // set internal energy density array given array of density and pressure
+  // call with:
+  //      epsilon = internal_energy_density<nx>(density, press);
+  template<int nx>
+  array<double,nx> internal_energy_density(const array<double,nx>& density,
+					   const array<double,nx>& pressure) const{
+    array<double,nx> epsilon;
+    for(int i=0; i<nx; i++)
+      epsilon[i] = pressure[i] / (density[i] * (gamma-1.));
+
+    return epsilon;
   }
 
-  template<size_t nx>
-  array<double,nx> csound(const array<double,nx> rho, const array<double,nx> P) const{
-    array<double,nx> result = P/rho;
-    return result;
+  //==========//
+  // pressure //
+  //==========//
+  // set pressure array given array of density and internal energy density
+  // call with:
+  //      press = pressure<nx>(density, epsilon);
+  template<int nx>
+  array<double,nx> pressure(const array<double,nx>& density,
+			    const array<double,nx>& internal_energy_density) const{
+    array<double,nx> press;
+    for(int i=0; i<nx; i++)
+      press[i] = density[i] * internal_energy_density[i] * (gamma-1.);
+    
+    return press;
   }
 
-  template<size_t nx>
-  array<double,nx> Eint(const array<double,nx> rho, const array<double,nx> P) const{
-    return 3./2. * P;
-  }
+  //============//
+  // soundspeed //
+  //============//
+  // set sound speed array given array of density and pressure
+  // call with:
+  //      cs = soundspeed<nx>(density, press);
+  template<int nx>
+  array<double,nx> soundspeed(const array<double,nx>& density,
+				const array<double,nx>& pressure) const{
+    array<double,nx> cs;
+    for(int i=0; i<nx; i++)
+      cs[i] = sqrt(gamma * pressure[i] / density[i]);
+
+    return cs;
+  }  
 };
+
+#endif
