@@ -8,7 +8,7 @@
 #include "misc.h"
 using namespace std;
 
-const int nx = 1000;
+const int nx = 100;
 const int nghost = 1;
 const double dx = 1./nx;
 const double tend = 0.25;
@@ -56,8 +56,8 @@ int main(){
   double t=0;
   ofstream output;
   output.open("output.dat");
-  output << "# it t dt i x rho Eint px" << endl;
-  print(output, it, t, 0, x, rho, Eint, px);
+  output << "# it t ix x rho px Etot" << endl;
+  print(output, it, t, 0, x, rho, px, Eint);
   
   // start time integration
   bool end = false;
@@ -88,7 +88,7 @@ int main(){
     reflecting_boundary_conditions(px, rho, Eint);
     
     // output the fluid data
-    print(output, it, t, dt, x, rho, Eint, px);
+    print(output, it, t, dt, x, rho, px, Eint);
   }
 
   output.close();

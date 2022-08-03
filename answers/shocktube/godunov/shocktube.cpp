@@ -14,7 +14,7 @@
 using namespace std;
 
 // simulation parameters
-const int nx = 102;                 // number of zones, including ghost zones
+const int nx = 1002;                 // number of zones, including ghost zones
 const int nghost = 1;               // number of ghost zones at each end
 const double dx = 1./nx;            // grid spacing
 const double tend = 0.25;           // end time of the simulation
@@ -51,8 +51,8 @@ int main(){
   double t=0;
   ofstream output;
   output.open("output.dat");
-  output << "# it t i rho vx P px Etot" << endl;
-  print<nx>(output, it, t, primitive, conservative);
+  output << "# it t ix x rho px Etot" << endl;
+  print<nx>(output, it, t, dx, primitive, conservative);
   
   // start time integration
   bool end = false;
@@ -87,7 +87,7 @@ int main(){
     primitive = get_primitive<nx>(conservative, eos);
     
     // output the fluid data
-    print<nx>(output, it, t, primitive, conservative);
+    print<nx>(output, it, t, dx, primitive, conservative);
   }
 
   output.close();

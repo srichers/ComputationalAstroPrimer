@@ -26,12 +26,13 @@ mpl.rcParams['axes.linewidth'] = 2
 # read the data #
 #===============#
 filename = "output.dat"
-it = np.genfromtxt(filename, usecols=(0))
-t = np.genfromtxt(filename, usecols=(1))
-x = np.genfromtxt(filename, usecols=(4))
-rho = np.genfromtxt(filename, usecols=(5))
-eint = np.genfromtxt(filename, usecols=(6))
-px = np.genfromtxt(filename, usecols=(7))
+it = np.genfromtxt(filename,   usecols=(0))
+t = np.genfromtxt(filename,    usecols=(1))
+ix = np.genfromtxt(filename,   usecols=(2))
+x = np.genfromtxt(filename,    usecols=(3))
+rho = np.genfromtxt(filename,  usecols=(4))
+px = np.genfromtxt(filename,   usecols=(5))
+etot = np.genfromtxt(filename, usecols=(6))
 
 fig, axes = plt.subplots(3,1)
 plt.subplots_adjust(wspace=0, hspace=0)
@@ -43,16 +44,16 @@ axes[0].set_ylim(0, np.max(rho[initial])*1.1)
 axes[0].set_xlim(0, np.max(x))
 axes[0].set_ylabel(r"$\rho$")
 
-px_max = np.max(np.sqrt(eint[initial] * 2.*rho[initial]))
+px_max = np.max(np.sqrt(etot[initial] * 2.*rho[initial]))
 pxplot, = axes[1].plot([],[],'g',lw=2)
 axes[1].set_ylim(-px_max, px_max)
 axes[1].set_xlim(0, np.max(x))
 axes[1].set_ylabel(r"$p_x$")
 
-eintplot, = axes[2].plot([],[],'b', lw=2)
-axes[2].set_ylim(0, np.max(eint[initial])*1.1)
+etotplot, = axes[2].plot([],[],'b', lw=2)
+axes[2].set_ylim(0, np.max(etot[initial])*1.1)
 axes[2].set_xlim(0, np.max(x))
-axes[2].set_ylabel(r"$e_\mathrm{int}$")
+axes[2].set_ylabel(r"$e_\mathrm{tot}$")
 axes[2].set_xlabel(r"$x$")
 
 #============#
@@ -74,10 +75,11 @@ def animate(i):
     locs = np.where(it==i)
     time = t[locs][0]
 
+    axes[0].set_title(str(time))
     rhoplot.set_data(x[locs], rho[locs])
     pxplot.set_data(x[locs], px[locs])
-    eintplot.set_data(x[locs], eint[locs])
-    return rhoplot, pxplot, eintplot
+    etotplot.set_data(x[locs], etot[locs])
+    return rhoplot, pxplot, etotplot
 
 ani = animation.FuncAnimation(fig, animate)
 #plt.show()

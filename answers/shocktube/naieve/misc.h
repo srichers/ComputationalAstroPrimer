@@ -36,8 +36,8 @@ double max(const array<double,nx>& y){
 }
 
 template<size_t nx>
-void print(ofstream& output, int it, double t, double dt, const array<double,nx>& x, const array<double,nx>& rho, const array<double,nx>& Eint, const array<double,nx>& px){
-  for(int i=0; i<nx; i++){
-    output << it << "\t" << t << "\t" << dt << "\t" << i << "\t" << x[i] << "\t" << rho[i] << "\t" << Eint[i] << "\t" << px[i] << endl;
+void print(ofstream& output, int it, double t, double dt, const array<double,nx>& x, const array<double,nx>& rho, const array<double,nx>& px, const array<double,nx>& Eint){
+  for(int ix=0; ix<nx; ix++){
+    output << it << "\t" << t << "\t" << ix << "\t" << x[ix] << "\t" << rho[ix] << "\t" << px[ix] << "\t" << Eint[ix] + px[ix]*px[ix]/(2.*rho[ix]) << endl;
   }
 }
