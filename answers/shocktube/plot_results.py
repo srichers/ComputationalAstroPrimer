@@ -71,6 +71,7 @@ axes[2].set_ylim(bottom = np.min(Eerror[np.where(Eerror>0)]) * 0.5)
 
 
 for ax in axes:
+    ax.grid()
     ax.set_ylim(top=1)
     ax.set_xlim(0,tlist[-1])
     ax.minorticks_on()
