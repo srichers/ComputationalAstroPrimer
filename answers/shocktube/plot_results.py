@@ -12,7 +12,6 @@ px = np.genfromtxt(filename,   usecols=(5))
 etot = np.genfromtxt(filename, usecols=(6))
 
 ilist = np.unique(it)
-#tlist = np.unique(t)
 Nt = len(ilist)-10
 
 E = np.zeros(Nt)
@@ -65,6 +64,11 @@ axes[2].semilogy(tlist,Eerror,"b")
 axes[0].set_ylabel(r"$\delta M/M_0$")
 axes[1].set_ylabel(r"$\delta P/P_\mathrm{max}$")
 axes[2].set_ylabel(r"$\delta E/E_0$")
+
+axes[0].set_ylim(bottom = np.min(Merror[np.where(Merror>0)]) * 0.5)
+axes[1].set_ylim(bottom = np.min(Perror[np.where(Perror>0)]) * 0.5)
+axes[2].set_ylim(bottom = np.min(Eerror[np.where(Eerror>0)]) * 0.5)
+
 
 for ax in axes:
     ax.set_ylim(top=1)
