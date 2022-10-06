@@ -1,0 +1,3 @@
+# packages needed by Binder to run jupyter notebooks
+numpy
+matplotlib
