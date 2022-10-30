@@ -1,0 +1,7 @@
+# list python packages required for Binder
+name: example-environment
+channels:
+  - conda-forge
+dependencies:
+  - numpy
+  - matplotlib
